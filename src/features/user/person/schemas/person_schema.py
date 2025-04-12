@@ -1,10 +1,10 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, EmailStr
 from uuid import UUID
 
 
 class PersonCreateSchema(BaseModel):
-    name: str
-    email: str
+    name: str = Field(..., min_length=3, max_length=50)
+    email: EmailStr
 
 
 class PersonResponseSchema(PersonCreateSchema):
