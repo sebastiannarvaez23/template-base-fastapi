@@ -1,0 +1,9 @@
+from enum import Enum
+
+class ErrorCode(str, Enum):
+    UNEXPECTED_ERROR = "000000"
+    VALIDATION_ERROR = "000001"
+    DATABASE_ERROR = "000002"
+    AUTHENTICATION_FAILED = "000004"
+    PERMISSION_DENIED = "000005"
+    NOT_FOUND = "000006"
