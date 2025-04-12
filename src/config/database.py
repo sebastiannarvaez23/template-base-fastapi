@@ -4,6 +4,9 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 
 class DatabaseConfig:
+    SQLALCHEMY_DATABASE_URL = os.getenv("DB_URL", "sqlite:///./test.db")
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    
     def __init__(self):
         self.database_url = os.getenv("DB_URL")
         self.engine = create_async_engine(self.database_url, echo=True)

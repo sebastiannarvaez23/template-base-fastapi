@@ -1,3 +1,5 @@
+import asyncio
+
 from fastapi import FastAPI
 
 from dotenv import load_dotenv
@@ -5,7 +7,8 @@ from dotenv import load_dotenv
 from api_gateway.adapters.http.app_routes import init_routes
 from config.database import DatabaseConfig
 from config.server import Server
-
+from config.base import Base
+from config.session import engine, init_db
 
 load_dotenv()
 
@@ -16,6 +19,7 @@ init_routes(app)
 async def startup():
     db = DatabaseConfig()
     await db.authenticate()
+    await init_db()
 
 if __name__ == "__main__":
     server = Server(app)
