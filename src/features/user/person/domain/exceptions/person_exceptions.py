@@ -1,7 +1,5 @@
 from enum import Enum
 
-from core.exceptions.base_exception import ApplicationException
-
 
 class PersonErrorCode(str, Enum):
     EMAIL_ALREADY_EXISTS = "020001"
