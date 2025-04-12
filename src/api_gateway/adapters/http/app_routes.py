@@ -2,12 +2,14 @@ import os
 
 from fastapi import FastAPI
 from sqlalchemy.ext.asyncio import create_async_engine
+from features.user.person.adapters.http.person_routes import router as person_router
 
 
 def init_routes(app: FastAPI):
     @app.get("/")
     async def root():
         return {"message": "API Gateway is running!"}
+    app.include_router(person_router)
 
 class DatabaseConfig:
     def __init__(self):
