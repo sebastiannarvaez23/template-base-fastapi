@@ -11,7 +11,11 @@ from config.session import init_db
 
 load_dotenv()
 
-app = FastAPI()
+app = FastAPI(
+    title="Template base FastAPI",
+    description="Template base for creating backends in fastapi.",
+    version="1.0.0" 
+)
 init_routes(app)
 
 @app.on_event("startup")
