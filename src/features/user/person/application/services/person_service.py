@@ -1,3 +1,4 @@
+from features.user.person.domain.entities.person import Person
 from features.user.person.domain.ports.person_repository import PersonRepository
 from features.user.person.schemas.person_schema import PersonCreateSchema, PersonResponseSchema
 
@@ -7,9 +8,6 @@ class PersonService:
         self.person_repository = person_repository
 
     async def create_person(self, person_data: PersonCreateSchema) -> PersonResponseSchema:
-        person = await self.person_repository.create(person_data)
-        return PersonResponseSchema(
-            id=person.id,
-            name=person.name,
-            email=person.email,
-        )
+        person: Person = await self.person_repository.create(person_data)
+        person_dict = person.to_dict()
+        return PersonResponseSchema(**person_dict)

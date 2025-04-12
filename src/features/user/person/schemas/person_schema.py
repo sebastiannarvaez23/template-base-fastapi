@@ -7,9 +7,9 @@ from typing import Optional
 
 class PersonCreateSchema(BaseModel):
     first_name: str = Field(..., min_length=3, max_length=50)
-    second_name: str = Field(..., min_length=3, max_length=50)
+    second_name: Optional[str] = Field(None, min_length=3, max_length=50)
     first_last_name: str = Field(..., min_length=3, max_length=50)
-    second_last_name: str = Field(..., min_length=3, max_length=50)
+    second_last_name: Optional[str] = Field(None, min_length=3, max_length=50)
     phone: str = Field(..., min_length=10, max_length=10)
     email: EmailStr
     birth_date: date

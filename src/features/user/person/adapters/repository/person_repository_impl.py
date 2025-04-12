@@ -13,8 +13,14 @@ class PersonRepositoryImpl(PersonRepository):
 
     async def create(self, person_data: PersonCreateSchema) -> Person:
         person = Person(
-            name=person_data.name,
+            first_name=person_data.first_name,
+            second_name=person_data.second_name,
+            first_last_name=person_data.first_last_name,
+            second_last_name=person_data.second_last_name,
             email=person_data.email,
+            phone=person_data.phone,
+            birth_date=person_data.birth_date,
+            avatar=person_data.avatar,
         )
         self.db.add(person)
         await self.db.commit()
