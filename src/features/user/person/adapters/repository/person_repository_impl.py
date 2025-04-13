@@ -1,16 +1,19 @@
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from typing import Optional
 
 from features.user.person.domain.entities.person import Person
 from features.user.person.domain.ports.person_repository import PersonRepository
 from features.user.person.schemas.person_schema import PersonCreateSchema
-from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class PersonRepositoryImpl(PersonRepository):
     def __init__(self, db: AsyncSession):
         self.db = db
 
+    async def query(self):
+        return select(Person)
+        
     async def create(self, person_data: PersonCreateSchema) -> Person:
         person = Person(
             first_name=person_data.first_name,

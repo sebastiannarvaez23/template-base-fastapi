@@ -19,8 +19,15 @@ class PersonCreateSchema(BaseModel):
         arbitrary_types_allowed = True
         from_attributes = True
 
-
 class PersonResponseSchema(PersonCreateSchema):
     id: UUID
 
     model_config = ConfigDict(from_attributes=True)
+    
+class PersonFilterSchema(BaseModel):
+    first_name: Optional[str] = None
+    second_name: Optional[str] = None
+    first_last_name: Optional[str] = None
+    second_last_name: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
