@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends
-from fastapi import Query
+from fastapi import APIRouter, Depends, Query, Path
+
+from uuid import UUID
 
 from core.schemas.paginated_response import PaginatedResponse
 from features.user.person.application.services.person_service import PersonService
@@ -16,6 +17,13 @@ async def get_persons(
     person_service: PersonService = Depends(get_person_service)
 ):
     return await person_service.get_persons(page, filters)
+
+@router.get("/person/{person_id}", response_model=PersonResponseSchema)
+async def get_person_by_id(
+    person_id: UUID,
+    person_service: PersonService = Depends(get_person_service)
+):
+    return await person_service.get_person_by_id(person_id)
 
 @router.post("/person")
 async def create_person(

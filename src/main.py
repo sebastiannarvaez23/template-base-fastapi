@@ -19,8 +19,10 @@ from utils.handlers.exception_handler import (
 )
 from features.user.person.domain.exceptions.person_exceptions import (
     PersonAlreadyExistsException,
-    PhoneAlreadyExistsException
+    PhoneAlreadyExistsException,
+    PersonNotFoundException
 )
+
 
 load_dotenv()
 
@@ -37,6 +39,7 @@ app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.add_exception_handler(StarletteHTTPException, http_exception_handler)
 app.add_exception_handler(PersonAlreadyExistsException, person_exceptions_handler)
 app.add_exception_handler(PhoneAlreadyExistsException, person_exceptions_handler)
+app.add_exception_handler(PersonNotFoundException, person_exceptions_handler)
 # ----
 
 @app.on_event("startup")
