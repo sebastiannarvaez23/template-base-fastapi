@@ -1,8 +1,8 @@
-from pydantic import BaseModel, ConfigDict, Field, EmailStr
-from uuid import UUID
-from datetime import date
 from fastapi import UploadFile
+from datetime import date
+from pydantic import BaseModel, ConfigDict, Field, EmailStr
 from typing import Optional
+from uuid import UUID
 
 
 class PersonCreateSchema(BaseModel):

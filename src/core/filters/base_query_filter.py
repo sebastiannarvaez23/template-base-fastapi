@@ -1,6 +1,6 @@
-from sqlalchemy import select
 from typing import TypeVar, Generic
 from sqlalchemy.sql import Select
+
 
 T = TypeVar("T")
 

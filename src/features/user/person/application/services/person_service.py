@@ -3,9 +3,9 @@ from sqlalchemy.exc import IntegrityError
 from features.user.person.domain.entities.person import Person
 from features.user.person.domain.exceptions.person_exceptions import PersonAlreadyExistsException, PhoneAlreadyExistsException
 from features.user.person.domain.ports.person_repository import PersonRepository
+from features.user.person.domain.utils.person_filter import PersonFilter
 from features.user.person.schemas.person_schema import PersonCreateSchema, PersonResponseSchema
 from utils.pagination.pagination_utils import paginate_query
-from features.user.person.domain.utils.person_filter import PersonFilter
 
 
 class PersonService:

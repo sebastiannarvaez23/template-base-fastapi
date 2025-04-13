@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import Optional
 from sqlalchemy.sql import Select
+from typing import Optional
 
 from features.user.person.domain.entities.person import Person
 
