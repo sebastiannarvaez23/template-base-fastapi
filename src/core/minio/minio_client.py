@@ -1,9 +1,12 @@
 import io
 
+from fastapi import UploadFile
+
 from config.minio import minio_conn
 from config.config import settings
 from datetime import timedelta
 from minio.error import S3Error
+from uuid import uuid4
 
 
 class MinioClient:
@@ -15,7 +18,10 @@ class MinioClient:
         if not minio_conn.bucket_exists(self.bucket_name):
             minio_conn.make_bucket(self.bucket_name)
 
-    def upload_file(self, file_data: bytes, file_name: str, content_type: str = "application/octet-stream") -> str:
+    async def upload_file(self, file: UploadFile) -> str:
+        content_type: str = file.content_type
+        file_name: str = f"avatar_{uuid4()}.jpg"
+        file_data: bytes = await file.read()
         file_stream = io.BytesIO(file_data)
         file_size = len(file_data)
 

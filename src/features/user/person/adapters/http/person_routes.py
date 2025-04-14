@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, Query, File, UploadFile, Form
 
-from uuid import UUID
-from typing import Optional
-from pydantic import EmailStr
 from datetime import date
+from pydantic import EmailStr
+from typing import Optional
+from uuid import UUID
 
 from core.schemas.paginated_response import PaginatedResponse
 from features.user.person.application.services.person_service import PersonService

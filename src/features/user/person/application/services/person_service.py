@@ -1,6 +1,6 @@
 from fastapi import UploadFile
 from sqlalchemy.exc import IntegrityError
-from uuid import UUID, uuid4
+from uuid import UUID
 
 from core.minio.minio_client import MinioClient
 from features.user.person.adapters.repository.person_repository_impl import PersonRepositoryImpl
@@ -19,22 +19,27 @@ class PersonService:
     async def get_persons(self, page: int, filters: dict):
         base_query = await self.person_repository.query()
         query = PersonFilter(**filters.dict()).apply(base_query)
-        return await paginate_query(self.person_repository.db, query, page)
+        result = await paginate_query(self.person_repository.db, query, page)
+        for person in result["rows"]:
+            if person.avatar:
+                person.avatar = self.minio_client.get_presigned_url(person.avatar)
+            else:
+                person.avatar = None
+        return result
     
     async def get_person_by_id(self, person_id: UUID) -> PersonResponseSchema:
         person = await self.person_repository.get_by_id(person_id)
         if not person:
             raise PersonNotFoundException(person_id)
+        if person.avatar:
+            person.avatar = self.minio_client.get_presigned_url(person.avatar)
+        else:
+            person.avatar = None
         return PersonResponseSchema.from_orm(person)
 
     async def create_person(self, person_data: PersonCreateSchema, avatar: UploadFile = None) -> PersonResponseSchema:
         try:
-            avatar_filename = None
-            if avatar:
-                avatar_data = await avatar.read()
-                avatar_filename = self.minio_client.upload_file(
-                    avatar_data, file_name=f"avatar_{uuid4()}.jpg", content_type=avatar.content_type
-                )
+            if avatar: avatar_filename = await self.minio_client.upload_file(avatar)
             person_data_dict = person_data.dict()
             person_data_dict["avatar"] = avatar_filename
             person = await self.person_repository.create(person_data_dict)
@@ -47,26 +52,14 @@ class PersonService:
                 raise
         return PersonResponseSchema.from_orm(person)
     
-    async def update_person(
-        self,
-        person_id: UUID,
-        person_data: PersonUpdateSchema,
-        avatar: UploadFile = None
-    ) -> PersonResponseSchema:
+    async def update_person( self, person_id: UUID, person_data: PersonUpdateSchema, avatar: UploadFile = None) -> PersonResponseSchema:
         person = await self.person_repository.get_by_id(person_id)
         if not person:
             raise PersonNotFoundException(person_id)
         try:
-            avatar_filename = person.avatar
             if avatar:
-                if person.avatar:
-                    self.minio_client.delete_file(person.avatar)
-                avatar_data = await avatar.read()
-                avatar_filename = self.minio_client.upload_file(
-                    avatar_data,
-                    file_name=f"avatar_{uuid4()}.jpg",
-                    content_type=avatar.content_type
-                )
+                if person.avatar: self.minio_client.delete_file(person.avatar)
+                avatar_filename = await self.minio_client.upload_file(avatar)
             person_data_dict = person_data.dict(exclude_unset=True)
             person_data_dict["avatar"] = avatar_filename
             updated_person = await self.person_repository.update(person, person_data_dict)
