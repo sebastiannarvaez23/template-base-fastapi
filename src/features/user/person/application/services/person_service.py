@@ -1,12 +1,12 @@
 from sqlalchemy.exc import IntegrityError
 from uuid import UUID
 
+from features.user.person.adapters.repository.person_repository_impl import PersonRepositoryImpl
 from features.user.person.domain.entities.person import Person
 from features.user.person.domain.exceptions.person_exceptions import PersonAlreadyExistsException, PhoneAlreadyExistsException, PersonNotFoundException
 from features.user.person.domain.utils.person_filter import PersonFilter
 from features.user.person.schemas.person_schema import PersonCreateSchema, PersonResponseSchema, PersonUpdateSchema
 from utils.pagination.pagination_utils import paginate_query
-from features.user.person.adapters.repository.person_repository_impl import PersonRepositoryImpl
 
 
 class PersonService:

@@ -1,16 +1,12 @@
-import uuid
-
 from sqlalchemy import Column, String, Date
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.ext.declarative import declarative_base
+
+from core.models.base_model_audit import BaseAuditModel
+from src.config.base import Base
 
 
-Base = declarative_base()
-
-class Person(Base):
+class Person(BaseAuditModel):
     __tablename__ = 'persons'
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, index=True)
     first_name = Column(String, nullable=False)
     second_name = Column(String, nullable=True)
     first_last_name = Column(String, nullable=False)

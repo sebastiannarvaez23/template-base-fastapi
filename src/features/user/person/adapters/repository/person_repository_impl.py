@@ -1,8 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from core.repository.base_repository import BaseRepository
 from features.user.person.domain.entities.person import Person
 from features.user.person.schemas.person_schema import PersonCreateSchema, PersonUpdateSchema
-from core.repository.base_repository import BaseRepository
 
 
 class PersonRepositoryImpl(BaseRepository[Person, PersonCreateSchema, PersonUpdateSchema]):

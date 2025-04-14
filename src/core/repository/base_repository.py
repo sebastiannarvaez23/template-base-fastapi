@@ -1,11 +1,13 @@
-from abc import ABC, abstractmethod
+from abc import ABC
+from datetime import datetime
+from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Generic, TypeVar, Type, Optional
 from uuid import UUID
-from sqlalchemy.ext.asyncio import AsyncSession
 
 T = TypeVar("T")
 C = TypeVar("C")
 U = TypeVar("U")
+
 
 class BaseRepository(ABC, Generic[T, C, U]):
     def __init__(self, db: AsyncSession, model: Type[T]):
@@ -37,6 +39,7 @@ class BaseRepository(ABC, Generic[T, C, U]):
         return instance
 
     async def delete(self, instance: T) -> None:
-        await self.db.delete(instance)
+        instance.deleted_at = datetime.utcnow()
+        self.db.add(instance)
         await self.db.commit()
         return instance
