@@ -2,7 +2,7 @@ import uuid
 
 from sqlalchemy import Column, DateTime, String, func
 from sqlalchemy.dialects.postgresql import UUID
-from src.config.base import Base
+from config.base import Base
 
 
 class BaseAuditModel(Base):
@@ -10,7 +10,7 @@ class BaseAuditModel(Base):
      
     id = Column(UUID, primary_key=True, default=uuid.uuid4, unique=True, index=True)
     created_at = Column(DateTime(timezone=True), default=func.now())
-    updated_at = Column(DateTime(timezone=True), default=func.now(), onupdate=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now(), nullable=True)
     deleted_at = Column(DateTime(timezone=True), nullable=True)
     created_by = Column(String, nullable=True)
     updated_by = Column(String, nullable=True)

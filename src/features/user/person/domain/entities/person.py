@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Date
 
 from core.models.base_model_audit import BaseAuditModel
-from src.config.base import Base
+from config.base import Base
 
 
 class Person(BaseAuditModel):
