@@ -4,6 +4,7 @@ from typing import Optional
 from uuid import UUID
 
 from features.user.person.domain.entities.person import Person
+from features.user.person.schemas.person_schema import PersonUpdateSchema
 
 
 class PersonRepository(ABC):
@@ -18,4 +19,12 @@ class PersonRepository(ABC):
     
     @abstractmethod
     def create(self, person: Person) -> Person:
+        pass
+
+    @abstractmethod
+    async def update(self, person: Person, person_data: PersonUpdateSchema) -> Person:
+        pass
+
+    @abstractmethod
+    async def delete(self, person: Person) -> None:
         pass

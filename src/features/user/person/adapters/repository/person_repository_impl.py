@@ -5,7 +5,7 @@ from uuid import UUID
 
 from features.user.person.domain.entities.person import Person
 from features.user.person.domain.ports.person_repository import PersonRepository
-from features.user.person.schemas.person_schema import PersonCreateSchema
+from features.user.person.schemas.person_schema import PersonCreateSchema, PersonUpdateSchema
 
 
 class PersonRepositoryImpl(PersonRepository):
@@ -34,3 +34,15 @@ class PersonRepositoryImpl(PersonRepository):
         await self.db.commit()
         return person
 
+    async def update(self, person: Person, person_data: PersonUpdateSchema) -> Person:
+        for field, value in person_data.dict(exclude_unset=True).items():
+            setattr(person, field, value)
+        self.db.add(person)
+        await self.db.commit()
+        await self.db.refresh(person)
+        return person
+
+    async def delete(self, person: Person) -> None:
+        await self.db.delete(person)
+        await self.db.commit()
+        return person

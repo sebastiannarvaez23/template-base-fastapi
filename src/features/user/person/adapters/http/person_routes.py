@@ -5,7 +5,12 @@ from uuid import UUID
 from core.schemas.paginated_response import PaginatedResponse
 from features.user.person.application.services.person_service import PersonService
 from features.user.person.dependecies import get_person_service
-from features.user.person.schemas.person_schema import PersonCreateSchema, PersonFilterSchema, PersonResponseSchema
+from features.user.person.schemas.person_schema import (
+    PersonCreateSchema, 
+    PersonFilterSchema, 
+    PersonResponseSchema,
+    PersonUpdateSchema
+)
 
 
 router = APIRouter()
@@ -31,3 +36,18 @@ async def create_person(
     person_service: PersonService = Depends(get_person_service)
 ):
     return await person_service.create_person(person_data)
+
+@router.put("/person/{person_id}", response_model=PersonResponseSchema)
+async def update_person(
+    person_id: UUID,
+    person_data: PersonUpdateSchema,
+    person_service: PersonService = Depends(get_person_service)
+):
+    return await person_service.update_person(person_id, person_data)
+
+@router.delete("/person/{person_id}")
+async def delete_person(
+    person_id: UUID,
+    person_service: PersonService = Depends(get_person_service)
+):
+    return await person_service.delete_person(person_id)

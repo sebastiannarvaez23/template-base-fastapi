@@ -5,7 +5,7 @@ from features.user.person.domain.entities.person import Person
 from features.user.person.domain.exceptions.person_exceptions import PersonAlreadyExistsException, PhoneAlreadyExistsException, PersonNotFoundException
 from features.user.person.domain.ports.person_repository import PersonRepository
 from features.user.person.domain.utils.person_filter import PersonFilter
-from features.user.person.schemas.person_schema import PersonCreateSchema, PersonResponseSchema
+from features.user.person.schemas.person_schema import PersonCreateSchema, PersonResponseSchema, PersonUpdateSchema
 from utils.pagination.pagination_utils import paginate_query
 
 
@@ -35,3 +35,24 @@ class PersonService:
             else:
                 raise
         return PersonResponseSchema.from_orm(person)
+    
+    async def update_person(self, person_id: UUID, person_data: PersonUpdateSchema) -> PersonResponseSchema:
+        person = await self.person_repository.get_by_id(person_id)
+        if not person:
+            raise PersonNotFoundException(person_id)
+        try:
+            updated_person = await self.person_repository.update(person, person_data)
+        except IntegrityError as e:
+            if "email" in str(e.orig).lower():
+                raise PersonAlreadyExistsException(person_data.email)
+            elif "phone" in str(e.orig).lower():
+                raise PhoneAlreadyExistsException(person_data.phone)
+            else:
+                raise
+        return PersonResponseSchema.from_orm(updated_person)
+
+    async def delete_person(self, person_id: UUID):
+        person = await self.person_repository.get_by_id(person_id)
+        if not person:
+            raise PersonNotFoundException(person_id)
+        return await self.person_repository.delete(person)
