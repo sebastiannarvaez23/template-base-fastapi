@@ -31,7 +31,7 @@ class BaseRepository(ABC, Generic[T, C, U]):
         return instance
 
     async def update(self, instance: T, update_data: U) -> T:
-        for field, value in update_data.dict(exclude_unset=True).items():
+        for field, value in update_data.items():
             setattr(instance, field, value)
         self.db.add(instance)
         await self.db.commit()

@@ -1,7 +1,4 @@
-import uuid
-import logging
-
-from fastapi import UploadFile, Depends
+from fastapi import UploadFile
 from sqlalchemy.exc import IntegrityError
 from uuid import UUID, uuid4
 
@@ -13,7 +10,6 @@ from features.user.person.domain.utils.person_filter import PersonFilter
 from features.user.person.schemas.person_schema import PersonCreateSchema, PersonResponseSchema, PersonUpdateSchema
 from utils.pagination.pagination_utils import paginate_query
 
-logger = logging.getLogger(__name__)
 
 class PersonService:
     def __init__(self, person_repository: PersonRepositoryImpl, minio_client: MinioClient):
@@ -51,12 +47,29 @@ class PersonService:
                 raise
         return PersonResponseSchema.from_orm(person)
     
-    async def update_person(self, person_id: UUID, person_data: PersonUpdateSchema) -> PersonResponseSchema:
+    async def update_person(
+        self,
+        person_id: UUID,
+        person_data: PersonUpdateSchema,
+        avatar: UploadFile = None
+    ) -> PersonResponseSchema:
         person = await self.person_repository.get_by_id(person_id)
         if not person:
             raise PersonNotFoundException(person_id)
         try:
-            updated_person = await self.person_repository.update(person, person_data)
+            avatar_filename = person.avatar
+            if avatar:
+                if person.avatar:
+                    self.minio_client.delete_file(person.avatar)
+                avatar_data = await avatar.read()
+                avatar_filename = self.minio_client.upload_file(
+                    avatar_data,
+                    file_name=f"avatar_{uuid4()}.jpg",
+                    content_type=avatar.content_type
+                )
+            person_data_dict = person_data.dict(exclude_unset=True)
+            person_data_dict["avatar"] = avatar_filename
+            updated_person = await self.person_repository.update(person, person_data_dict)
         except IntegrityError as e:
             if "email" in str(e.orig).lower():
                 raise PersonAlreadyExistsException(person_data.email)

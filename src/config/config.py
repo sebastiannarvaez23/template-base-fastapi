@@ -6,12 +6,12 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     MNO_BUCKET_NAME: str = "tebafa"
-    MINIO_ENDPOINT: str = "localhost"
-    MINIO_PORT: int = 9000
-    MINIO_ACCESS_KEY: str = "minio"
-    MINIO_SECRET_KEY: str = "minio123"
+    MNO_ENDPOINT: str = "localhost"
+    MNO_PORT: int = 9000
+    MNO_ACCESS_KEY: str = "minio"
+    MNO_SECRET_KEY: str = "minio123"
     MNO_BUCKET_NAME: str = "tebafa"
-    MINIO_SECURE: bool = False
+    MNO_SECURE: bool = False
     
 
     class Config:

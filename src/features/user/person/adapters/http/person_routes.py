@@ -5,7 +5,6 @@ from typing import Optional
 from pydantic import EmailStr
 from datetime import date
 
-from core.minio.minio_client import MinioClient
 from core.schemas.paginated_response import PaginatedResponse
 from features.user.person.application.services.person_service import PersonService
 from features.user.person.person_di import get_person_service
@@ -13,8 +12,7 @@ from features.user.person.schemas.person_schema import (
     PersonCreateSchema, 
     PersonFilterSchema, 
     PersonResponseSchema,
-    PersonUpdateSchema,
-    PersonCreateForm
+    PersonUpdateSchema
 )
 
 
@@ -63,10 +61,26 @@ async def create_person(
 @router.put("/person/{person_id}", response_model=PersonResponseSchema)
 async def update_person(
     person_id: UUID,
-    person_data: PersonUpdateSchema,
+    first_name: Optional[str] = Form(None),
+    second_name: Optional[str] = Form(None),
+    first_last_name: Optional[str] = Form(None),
+    second_last_name: Optional[str] = Form(None),
+    email: Optional[EmailStr] = Form(None),
+    phone: Optional[str] = Form(None),
+    birth_date: Optional[date] = Form(None),
+    avatar: Optional[UploadFile] = File(None),
     person_service: PersonService = Depends(get_person_service)
 ):
-    return await person_service.update_person(person_id, person_data)
+    person_data = PersonUpdateSchema(
+        first_name=first_name,
+        second_name=second_name,
+        first_last_name=first_last_name,
+        second_last_name=second_last_name,
+        email=email,
+        phone=phone,
+        birth_date=birth_date
+    )
+    return await person_service.update_person(person_id, person_data, avatar)
 
 @router.delete("/person/{person_id}")
 async def delete_person(
