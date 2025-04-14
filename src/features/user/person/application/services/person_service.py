@@ -3,14 +3,14 @@ from uuid import UUID
 
 from features.user.person.domain.entities.person import Person
 from features.user.person.domain.exceptions.person_exceptions import PersonAlreadyExistsException, PhoneAlreadyExistsException, PersonNotFoundException
-from features.user.person.domain.ports.person_repository import PersonRepository
 from features.user.person.domain.utils.person_filter import PersonFilter
 from features.user.person.schemas.person_schema import PersonCreateSchema, PersonResponseSchema, PersonUpdateSchema
 from utils.pagination.pagination_utils import paginate_query
+from features.user.person.adapters.repository.person_repository_impl import PersonRepositoryImpl
 
 
 class PersonService:
-    def __init__(self, person_repository: PersonRepository):
+    def __init__(self, person_repository: PersonRepositoryImpl):
         self.person_repository = person_repository
         
     async def get_persons(self, page: int, filters: dict):
