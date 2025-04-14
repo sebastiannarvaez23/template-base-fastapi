@@ -1,6 +1,11 @@
-from sqlalchemy.exc import IntegrityError
-from uuid import UUID
+import uuid
+import logging
 
+from fastapi import UploadFile, Depends
+from sqlalchemy.exc import IntegrityError
+from uuid import UUID, uuid4
+
+from core.minio.minio_client import MinioClient
 from features.user.person.adapters.repository.person_repository_impl import PersonRepositoryImpl
 from features.user.person.domain.entities.person import Person
 from features.user.person.domain.exceptions.person_exceptions import PersonAlreadyExistsException, PhoneAlreadyExistsException, PersonNotFoundException
@@ -8,10 +13,12 @@ from features.user.person.domain.utils.person_filter import PersonFilter
 from features.user.person.schemas.person_schema import PersonCreateSchema, PersonResponseSchema, PersonUpdateSchema
 from utils.pagination.pagination_utils import paginate_query
 
+logger = logging.getLogger(__name__)
 
 class PersonService:
-    def __init__(self, person_repository: PersonRepositoryImpl):
+    def __init__(self, person_repository: PersonRepositoryImpl, minio_client: MinioClient):
         self.person_repository = person_repository
+        self.minio_client = minio_client
         
     async def get_persons(self, page: int, filters: dict):
         base_query = await self.person_repository.query()
@@ -24,9 +31,17 @@ class PersonService:
             raise PersonNotFoundException(person_id)
         return PersonResponseSchema.from_orm(person)
 
-    async def create_person(self, person_data: PersonCreateSchema) -> PersonResponseSchema:
+    async def create_person(self, person_data: PersonCreateSchema, avatar: UploadFile = None) -> PersonResponseSchema:
         try:
-            person: Person = await self.person_repository.create(person_data)
+            avatar_filename = None
+            if avatar:
+                avatar_data = await avatar.read()
+                avatar_filename = self.minio_client.upload_file(
+                    avatar_data, file_name=f"avatar_{uuid4()}.jpg", content_type=avatar.content_type
+                )
+            person_data_dict = person_data.dict()
+            person_data_dict["avatar"] = avatar_filename
+            person = await self.person_repository.create(person_data_dict)
         except IntegrityError as e:
             if "email" in str(e.orig).lower():
                 raise PersonAlreadyExistsException(person_data.email)

@@ -24,7 +24,7 @@ class BaseRepository(ABC, Generic[T, C, U]):
         return result.scalar_one_or_none()
 
     async def create(self, create_data: C) -> T:
-        instance = self.model(**create_data.dict())
+        instance = self.model(**create_data)
         self.db.add(instance)
         await self.db.commit()
         await self.db.refresh(instance)

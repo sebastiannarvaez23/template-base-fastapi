@@ -1,15 +1,20 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, File, UploadFile, Form
 
 from uuid import UUID
+from typing import Optional
+from pydantic import EmailStr
+from datetime import date
 
+from core.minio.minio_client import MinioClient
 from core.schemas.paginated_response import PaginatedResponse
 from features.user.person.application.services.person_service import PersonService
-from features.user.person.dependecies import get_person_service
+from features.user.person.person_di import get_person_service
 from features.user.person.schemas.person_schema import (
     PersonCreateSchema, 
     PersonFilterSchema, 
     PersonResponseSchema,
-    PersonUpdateSchema
+    PersonUpdateSchema,
+    PersonCreateForm
 )
 
 
@@ -30,12 +35,30 @@ async def get_person_by_id(
 ):
     return await person_service.get_person_by_id(person_id)
 
-@router.post("/person")
+@router.post("/person", response_model=PersonResponseSchema)
 async def create_person(
-    person_data: PersonCreateSchema,
+    first_name: str = Form(...),
+    second_name: Optional[str] = Form(None),
+    first_last_name: str = Form(...),
+    second_last_name: Optional[str] = Form(None),
+    email: EmailStr = Form(...),
+    phone: str = Form(...),
+    birth_date: date = Form(...),
+    avatar: Optional[UploadFile] = File(None),
     person_service: PersonService = Depends(get_person_service)
 ):
-    return await person_service.create_person(person_data)
+    person_data = PersonCreateSchema(
+        first_name=first_name,
+        second_name=second_name,
+        first_last_name=first_last_name,
+        second_last_name=second_last_name,
+        email=email,
+        phone=phone,
+        birth_date=birth_date,
+        avatar=avatar
+    )
+
+    return await person_service.create_person(person_data, avatar)
 
 @router.put("/person/{person_id}", response_model=PersonResponseSchema)
 async def update_person(
