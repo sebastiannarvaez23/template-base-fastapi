@@ -9,7 +9,7 @@ from sqlalchemy import pool
 from alembic import context
 
 from sqlalchemy import engine_from_config
-from src.config.base import Base
+from config.base import Base
 from src.features.user.person.domain.entities.person import Person
 
 
