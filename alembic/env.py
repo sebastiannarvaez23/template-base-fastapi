@@ -11,6 +11,7 @@ from alembic import context
 from sqlalchemy import engine_from_config
 from config.base import Base
 from src.features.user.person.domain.entities.person import Person
+from src.features.user.user.domain.entities.user import User
 
 
 # this is the Alembic Config object, which provides

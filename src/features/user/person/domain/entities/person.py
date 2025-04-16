@@ -7,11 +7,11 @@ from config.base import Base
 class Person(BaseAuditModel):
     __tablename__ = 'persons'
 
-    first_name = Column(String, nullable=False)
-    second_name = Column(String, nullable=True)
-    first_last_name = Column(String, nullable=False)
-    second_last_name = Column(String, nullable=True)
-    email = Column(String, unique=True, index=True, nullable=False)
+    first_name = Column(String(70), nullable=False)
+    second_name = Column(String(70), nullable=True)
+    first_last_name = Column(String(70), nullable=False)
+    second_last_name = Column(String(70), nullable=True)
+    email = Column(String(120), unique=True, index=True, nullable=False)
     phone = Column(String(10), unique=True, nullable=False)
     birth_date = Column(Date, nullable=False)
     avatar = Column(String, nullable=True)
