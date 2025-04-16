@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Query, File, UploadFile, Form
 
 from datetime import date
 from pydantic import EmailStr
-from typing import Optional
+from typing import Optional, Annotated
 from uuid import UUID
 
 from core.schemas.paginated_response import PaginatedResponse
@@ -35,28 +35,28 @@ async def get_person_by_id(
 
 @router.post("/person", response_model=PersonResponseSchema)
 async def create_person(
-    first_name: str = Form(...),
-    second_name: Optional[str] = Form(None),
-    first_last_name: str = Form(...),
-    second_last_name: Optional[str] = Form(None),
-    email: EmailStr = Form(...),
-    phone: str = Form(...),
-    birth_date: date = Form(...),
+    first_name: Annotated[str, Form(..., min_length=3, max_length=50)],
+    first_last_name: Annotated[str, Form(..., min_length=3, max_length=50)],
+    phone: Annotated[str, Form(..., min_length=10, max_length=10)],
+    email: Annotated[EmailStr, Form()],
+    birth_date: Annotated[date, Form()],
+    second_name: Annotated[Optional[str], Form(..., min_length=3, max_length=50)] = None,
+    second_last_name: Annotated[Optional[str], Form(..., min_length=3, max_length=50)] = None,
     avatar: Optional[UploadFile] = File(None),
-    person_service: PersonService = Depends(get_person_service)
+    person_service: PersonService = Depends(get_person_service),
 ):
-    person_data = PersonCreateSchema(
+    form_data = PersonCreateSchema(
         first_name=first_name,
         second_name=second_name,
         first_last_name=first_last_name,
         second_last_name=second_last_name,
-        email=email,
         phone=phone,
+        email=email,
         birth_date=birth_date,
         avatar=avatar
     )
+    return await person_service.create_person(form_data, avatar)
 
-    return await person_service.create_person(person_data, avatar)
 
 @router.put("/person/{person_id}", response_model=PersonResponseSchema)
 async def update_person(
