@@ -1,40 +1,9 @@
-from fastapi import UploadFile,Form
+from fastapi import UploadFile, Form
+
 from datetime import date
 from pydantic import BaseModel, ConfigDict, Field, EmailStr
 from typing import Optional
 from uuid import UUID
-
-
-class PersonCreateForm(BaseModel):
-    first_name: str
-    second_name: Optional[str] = None
-    first_last_name: str
-    second_last_name: Optional[str] = None
-    email: str
-    phone: str
-    birth_date: str
-
-    @classmethod
-    def as_form(
-        cls,
-        first_name: str = Form(...),
-        second_name: Optional[str] = Form(None),
-        first_last_name: str = Form(...),
-        second_last_name: Optional[str] = Form(None),
-        email: str = Form(...),
-        phone: str = Form(...),
-        birth_date: str = Form(...)
-    ):
-        return cls(
-            first_name=first_name,
-            second_name=second_name or None,
-            first_last_name=first_last_name,
-            second_last_name=second_last_name or None,
-            email=email,
-            phone=phone,
-            birth_date=birth_date,
-        )
-
 
 
 class PersonCreateSchema(BaseModel):
@@ -52,7 +21,6 @@ class PersonCreateSchema(BaseModel):
         from_attributes = True
 
 
-
 class PersonUpdateSchema(BaseModel):
     first_name: Optional[str] = Field(None, min_length=3, max_length=50)
     second_name: Optional[str] = Field(None, min_length=3, max_length=50)
@@ -68,7 +36,6 @@ class PersonUpdateSchema(BaseModel):
         from_attributes = True
 
 
-
 class PersonResponseSchema(BaseModel):
     id: UUID
     first_name: str
@@ -81,7 +48,6 @@ class PersonResponseSchema(BaseModel):
     avatar: Optional[str] = None  
 
     model_config = ConfigDict(from_attributes=True)
-
 
 
 class PersonFilterSchema(BaseModel):
