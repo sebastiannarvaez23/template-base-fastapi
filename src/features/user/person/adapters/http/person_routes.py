@@ -16,9 +16,9 @@ from features.user.person.schemas.person_schema import (
 )
 
 
-router = APIRouter()
+person_router = APIRouter()
 
-@router.get("/person", response_model=PaginatedResponse[PersonResponseSchema])
+@person_router.get("/person", response_model=PaginatedResponse[PersonResponseSchema])
 async def get_persons(
     page: int = Query(..., ge=1),
     filters: PersonFilterSchema = Depends(),
@@ -26,14 +26,14 @@ async def get_persons(
 ):
     return await person_service.get_persons(page, filters)
 
-@router.get("/person/{person_id}", response_model=PersonResponseSchema)
+@person_router.get("/person/{person_id}", response_model=PersonResponseSchema)
 async def get_person_by_id(
     person_id: UUID,
     person_service: PersonService = Depends(get_person_service)
 ):
     return await person_service.get_person_by_id(person_id)
 
-@router.post("/person", response_model=PersonResponseSchema)
+@person_router.post("/person", response_model=PersonResponseSchema)
 async def create_person(
     first_name: Annotated[str, Form(..., min_length=3, max_length=50)],
     first_last_name: Annotated[str, Form(..., min_length=3, max_length=50)],
@@ -58,7 +58,7 @@ async def create_person(
     return await person_service.create_person(form_data, avatar)
 
 
-@router.put("/person/{person_id}", response_model=PersonResponseSchema)
+@person_router.put("/person/{person_id}", response_model=PersonResponseSchema)
 async def update_person(
     person_id: UUID,
     first_name: Optional[str] = Form(None),
@@ -82,7 +82,7 @@ async def update_person(
     )
     return await person_service.update_person(person_id, person_data, avatar)
 
-@router.delete("/person/{person_id}")
+@person_router.delete("/person/{person_id}")
 async def delete_person(
     person_id: UUID,
     person_service: PersonService = Depends(get_person_service)
