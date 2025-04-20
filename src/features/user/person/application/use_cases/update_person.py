@@ -4,7 +4,6 @@ from uuid import UUID
 from features.user.person.adapters.repository.person_repository_impl import PersonRepositoryImpl
 from features.user.person.domain.entities.person import Person
 from features.user.person.schemas.person_schema import PersonUpdateSchema
-from features.user.person.domain.entities.person import Person
 
 
 class UpdatePerson:

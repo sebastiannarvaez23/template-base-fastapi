@@ -2,7 +2,7 @@ import os
 
 from fastapi import FastAPI
 from sqlalchemy.ext.asyncio import create_async_engine
-from features.user.person.adapters.http.person_routes import router as person_router
+from features.user.person.adapters.http.person_routes import person_router
 
 
 def init_routes(app: FastAPI):

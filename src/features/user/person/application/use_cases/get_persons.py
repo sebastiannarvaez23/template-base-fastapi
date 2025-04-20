@@ -1,5 +1,3 @@
-from typing import Dict
-from sqlalchemy.sql import Select
 from utils.pagination.pagination_utils import paginate_query
 
 from features.user.person.adapters.repository.person_repository_impl import PersonRepositoryImpl
